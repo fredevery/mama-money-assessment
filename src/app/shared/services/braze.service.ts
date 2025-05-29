@@ -22,6 +22,7 @@ type ParsedBrazePushNotification = {
   providedIn: 'root'
 })
 export class BrazeService {
+  unreadMessages = signal<boolean>(false);
   contentCards = signal<BrazeContentCard[]>([]);
   constructor() {}
 
@@ -54,6 +55,7 @@ export class BrazeService {
   }
 
   handlePushNotification(notification: BrazePushNotification): void {
+    console.log('BrazeService: Received push notification:', notification);
     if (!this.isBrazePushNotification(notification)) {
       console.warn('Received non-Braze push notification:', notification);
       return;
@@ -110,10 +112,13 @@ export class BrazeService {
   }
 
   fetchContentCards(): void {
+    console.log('BrazeService: Fetching content cards from server...');
     if (this.pluginAvailable && BrazePlugin.getContentCardsFromServer) {
       BrazePlugin.getContentCardsFromServer(
         (cards: BrazeContentCard[]) => {
+          console.log('BrazeService: Fetched content cards:', cards);
           this.contentCards.set(cards);
+          this.unreadMessages.set(true);
         },
         (error: any) => {
           console.error('BrazeService: Error fetching content cards:', error);
