@@ -1,9 +1,9 @@
 # TODO Checklist for Mama Money Frontend Technical Assessment
 
 - [x] Implement `sendInboxTestEvent` in `src/app/home/home.page.ts` to trigger the "INBOX_MESSAGE_TEST" event using the Braze SDK
-- [ ] Complete `PushNotificationService` in `src/app/shared/services/push-notification.service.ts`
-  - [ ] In `pushNotificationReceived`, check if notification is from Braze (type === 'inbox' in extras)
-  - [ ] Refetch content cards from Braze when appropriate
+- [x] Complete `PushNotificationService` in `src/app/shared/services/push-notification.service.ts`
+  - [x] In `pushNotificationReceived`, check if notification is from Braze (type === 'inbox' in extras)
+  - [x] Refetch content cards from Braze when appropriate (structure and parsing logic in place; actual fetch logic can be implemented next)
 - [ ] Build or complete `InboxComponent` in `src/app/shared/components/inbox/inbox.component.ts` following the Figma design
   - [ ] Implement inbox UI per design system
   - [ ] Update inbox cards array when new content is available

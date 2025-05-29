@@ -20,7 +20,7 @@ export class PushNotificationService {
       'pushNotificationReceived',
       (notification: PushNotificationSchema | BrazePushNotification) => {
         if (this.braze.isBrazePushNotification(notification as BrazePushNotification)) {
-          this.handleBrazePushNotification(notification as BrazePushNotification);
+          this.braze.handlePushNotification(notification as BrazePushNotification);
         } else {
           this.handleOtherPushNotification(notification as PushNotificationSchema);
         }
@@ -28,15 +28,6 @@ export class PushNotificationService {
     );
 
     this.registerPush();
-  }
-
-  handleBrazePushNotification(notification: BrazePushNotification): void {
-    if (this.braze.isInboxNotification(notification)) {
-      const data = this.braze.parsePushNotification(notification);
-      // Handle Braze inbox notification
-      console.log('Received Braze inbox notification:', JSON.stringify(data));
-      // You can navigate to the inbox or show a specific content card here
-    }
   }
 
   handleOtherPushNotification(notification: PushNotificationSchema): void {

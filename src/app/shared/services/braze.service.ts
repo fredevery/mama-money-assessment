@@ -1,5 +1,6 @@
 import { BrazePushNotification } from '@models/braze/braze-push-notification';
-import { Injectable } from '@angular/core';
+import { BrazeContentCard } from '@models/braze/braze-content-card';
+import { Injectable, signal } from '@angular/core';
 
 declare var BrazePlugin: any;
 
@@ -21,6 +22,7 @@ type ParsedBrazePushNotification = {
   providedIn: 'root'
 })
 export class BrazeService {
+  contentCards = signal<BrazeContentCard[]>([]);
   constructor() {}
 
   get pluginAvailable(): boolean {
@@ -51,30 +53,25 @@ export class BrazeService {
     }
   }
 
+  handlePushNotification(notification: BrazePushNotification): void {
+    if (!this.isBrazePushNotification(notification)) {
+      console.warn('Received non-Braze push notification:', notification);
+      return;
+    }
+
+    if (this.isInboxNotification(notification)) {
+      this.fetchContentCards();
+    }
+  }
+
   parsePushNotification(notification: BrazePushNotification): ParsedBrazePushNotification {
     if (!this.isBrazePushNotification(notification)) {
-      throw new Error('Not a valid Braze push notification:' + notification);
+      throw new Error('Not a valid Braze push notification:' + JSON.stringify(notification));
     }
 
     const data = notification.data;
-    let parsedExtra = {};
-    let parsedContentCard = null;
-
-    if (data.extra) {
-      try {
-        parsedExtra = JSON.parse(data.extra);
-      } catch (e) {
-        console.error('Failed to parse extra data:', e);
-      }
-    }
-
-    if (data.ab_cd) {
-      try {
-        parsedContentCard = JSON.parse(data.ab_cd);
-      } catch (e) {
-        console.error('Failed to parse content card data:', e);
-      }
-    }
+    let parsedExtra = this.parsePushNotificationExtra(data.extra || '');
+    let parsedContentCard = this.parsePushNotificationContentCard(data.ab_cd || '');
 
     return {
       message: data.a,
@@ -93,8 +90,7 @@ export class BrazeService {
       return {};
     }
     try {
-      const parsed = JSON.parse(extra);
-      return { type: parsed.type || undefined };
+      return JSON.parse(extra);
     } catch (e) {
       console.error('Failed to parse extra data:', e);
       return {};
@@ -110,6 +106,19 @@ export class BrazeService {
     } catch (e) {
       console.error('Failed to parse content card data:', e);
       return null;
+    }
+  }
+
+  fetchContentCards(): void {
+    if (this.pluginAvailable && BrazePlugin.getContentCardsFromServer) {
+      BrazePlugin.getContentCardsFromServer(
+        (cards: BrazeContentCard[]) => {
+          this.contentCards.set(cards);
+        },
+        (error: any) => {
+          console.error('BrazeService: Error fetching content cards:', error);
+        }
+      );
     }
   }
 }

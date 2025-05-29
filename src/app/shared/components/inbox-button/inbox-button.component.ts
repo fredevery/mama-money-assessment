@@ -1,8 +1,9 @@
-import { AfterViewInit, Component, input, signal } from '@angular/core';
+import { AfterViewInit, Component, input, signal, inject, effect } from '@angular/core';
 import { IonButton, IonIcon, IonAccordion } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { notificationsOutline } from 'ionicons/icons';
 import anime, { AnimeInstance } from 'animejs';
+import { BrazeService } from '@services/braze.service';
 
 @Component({
   selector: 'app-inbox-button',
@@ -41,6 +42,7 @@ import anime, { AnimeInstance } from 'animejs';
   standalone: true
 })
 export class InboxButtonComponent implements AfterViewInit {
+  braze = inject(BrazeService);
   readonly slot = input<IonAccordion['toggleIconSlot']>();
   unreadMessages = signal(false);
   private shakeAnimation?: AnimeInstance;
@@ -75,6 +77,13 @@ export class InboxButtonComponent implements AfterViewInit {
       easing: 'easeInOutSine',
       duration: 2000,
       autoplay: false
+    });
+
+    effect(() => {
+      if (this.braze.hasUnreadInboxMessages()) {
+        this.unreadMessages.set(true);
+        this.shakeAnimation?.play();
+      }
     });
   }
 }
