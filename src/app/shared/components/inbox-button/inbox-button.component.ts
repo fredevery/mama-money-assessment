@@ -5,6 +5,7 @@ import { addIcons } from 'ionicons';
 import { notificationsOutline } from 'ionicons/icons';
 import anime, { AnimeInstance } from 'animejs';
 import { BrazeService } from '@services/braze.service';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-inbox-button',
@@ -15,7 +16,7 @@ import { BrazeService } from '@services/braze.service';
         <circle r="4.5" cx="5" cy="5" fill="red" />
       </svg>
       }
-      <ion-button class="bell" [slot]="slot()" fill="clear" (click)="showInbox.emit()">
+      <ion-button class="bell" [slot]="slot()" fill="clear" (click)="showInbox()">
         <ion-icon color="dark" slot="icon-only" name="notifications-outline"></ion-icon>
       </ion-button>
     </div>
@@ -48,7 +49,9 @@ export class InboxButtonComponent implements AfterViewInit {
 
   braze = inject(BrazeService);
   unreadMessages = computed(() => this.braze.unreadMessages());
-  showInbox = output<void>();
+  showInboxEvent = output<void>();
+
+  private shakeAnimationTimeout: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
     addIcons({ notificationsOutline });
@@ -56,14 +59,22 @@ export class InboxButtonComponent implements AfterViewInit {
     effect(() => {
       if (this.unreadMessages()) {
         console.log('InboxButtonComponent: Unread messages detected, playing shake animation');
-        this.shakeAnimation?.play();
+        this.playShakeAnimation();
+      } else {
+        clearTimeout(this.shakeAnimationTimeout!);
       }
     });
   }
 
-  // showInbox(): void {
-  //   // TODO: Show Inbox component in Modal when tapping Bell icon
-  // }
+  playShakeAnimation(): void {
+    this.shakeAnimation?.play();
+    this.shakeAnimationTimeout = setTimeout(() => this.playShakeAnimation(), 3000);
+  }
+
+  showInbox(): void {
+    clearTimeout(this.shakeAnimationTimeout!);
+    this.showInboxEvent.emit();
+  }
 
   // TODO: When receiving/reading new Braze inbox message, update notification state.
   // Icon should play the shake animation when new unread messages are received.

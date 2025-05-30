@@ -126,4 +126,10 @@ export class BrazeService {
       );
     }
   }
+
+  removeCard(cardId: string): void {
+    this.contentCards.update((cards) => cards.filter((card) => card.id !== cardId));
+    console.log(`BrazeService: Removed content card with ID: ${cardId}`, this.contentCards().length);
+    BrazePlugin.logContentCardDismissed(cardId);
+  }
 }

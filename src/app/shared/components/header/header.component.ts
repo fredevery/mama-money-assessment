@@ -16,10 +16,12 @@ import { InboxComponent } from '@components/inbox/inbox.component';
       }
       <ion-title> {{ title() }} </ion-title>
       @if (showInboxButton()) {
-      <app-inbox-button slot="end" (showInbox)="showInbox()"></app-inbox-button>
+      <app-inbox-button slot="end" (showInboxEvent)="showInbox()"></app-inbox-button>
       }
     </ion-toolbar>
-    <app-inbox [showInbox]="inboxIsVisible()"></app-inbox>`,
+    @if (showInboxButton()) {
+    <app-inbox [showInbox]="inboxIsVisible()" (backEvent)="hideInbox()"></app-inbox>
+    }`,
   styles: [
     `
       ion-toolbar {
@@ -48,5 +50,9 @@ export class HeaderComponent {
 
   showInbox(): void {
     this.inboxIsVisible.set(true);
+  }
+
+  hideInbox(): void {
+    this.inboxIsVisible.set(false);
   }
 }

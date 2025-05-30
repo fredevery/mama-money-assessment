@@ -1,53 +1,56 @@
-import { Component, inject, computed, input, forwardRef } from '@angular/core';
+import { Component, inject, computed, input, forwardRef, output, signal, ViewEncapsulation } from '@angular/core';
 import { BrazeService } from '@services/braze.service';
 import { BrazeContentCard } from '@models/braze/braze-content-card';
 import { MmCardComponent } from '@components/mm-card/mm-card.component';
-import {
-  IonList,
-  IonItem,
-  IonAvatar,
-  IonLabel,
-  IonButton,
-  IonIcon,
-  IonHeader,
-  IonContent,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardContent,
-  IonCardSubtitle,
-  IonModal
-} from '@ionic/angular/standalone';
+import { IonList, IonHeader, IonContent, IonModal, IonAlert } from '@ionic/angular/standalone';
 import { HeaderComponent } from '../header/header.component';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-inbox',
   templateUrl: './inbox.component.html',
   styleUrls: ['./inbox.component.scss'],
   standalone: true,
-  imports: [
-    IonCardSubtitle,
-    IonHeader,
-    IonList,
-    IonItem,
-    IonAvatar,
-    IonLabel,
-    IonButton,
-    IonIcon,
-    IonContent,
-    IonCard,
-    IonCardHeader,
-    IonCardTitle,
-    IonCardContent,
-    MmCardComponent,
-    IonModal,
-    forwardRef(() => HeaderComponent)
-  ]
+  animations: [
+    trigger('itemAnimation', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(20px)' }),
+        animate('300ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ]),
+      transition(':leave', [
+        style({ opacity: 1, transform: 'translateY(0)' }),
+        animate('300ms ease-in', style({ opacity: 0, transform: 'translateY(-20px)' }))
+      ])
+    ])
+  ],
+  // encapsulation: ViewEncapsulation.Emulated,
+  imports: [IonAlert, IonHeader, IonList, IonContent, MmCardComponent, IonModal, forwardRef(() => HeaderComponent)]
 })
 export class InboxComponent {
   showInbox = input(false);
+  cardToDismiss = signal<BrazeContentCard | null>(null);
   braze = inject(BrazeService);
   contentCards = computed(() => this.braze.contentCards());
+  showDismissConfirmation = computed(() => this.cardToDismiss() !== null);
+  backEvent = output<void>();
+
+  confirmationActions = [
+    {
+      text: 'No',
+      role: 'cancel',
+      handler: () => {
+        this.cancelDismissCard();
+      }
+    },
+    {
+      text: 'Yes',
+      role: 'confirm',
+      handler: () => {
+        this.braze.removeCard(this.cardToDismiss()!.id);
+        this.cardToDismiss.set(null);
+      }
+    }
+  ];
 
   openCard(card: BrazeContentCard) {
     // TODO: Implement deep link or navigation logic
@@ -56,11 +59,11 @@ export class InboxComponent {
     }
   }
 
-  dismissCard(card: BrazeContentCard, event: Event) {
-    event.stopPropagation();
-    // TODO: Implement confirmation dialog and card dismissal logic
-    // if (confirm('Are you sure you want to dismiss this message?')) {
-    //   this.braze.contentCards.set(this.contentCards().filter((c) => c.id !== card.id));
-    // }
+  dismissCard(card: BrazeContentCard) {
+    this.cardToDismiss.set(card);
+  }
+
+  cancelDismissCard() {
+    this.cardToDismiss.set(null);
   }
 }
