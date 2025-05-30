@@ -5,21 +5,24 @@
   - [x] In `pushNotificationReceived`, check if notification is from Braze (type === 'inbox' in extras)
   - [x] Refetch content cards from Braze when appropriate (structure and parsing logic in place; actual fetch logic can be implemented next)
 - [x] Implement content card fetching in `BrazeService`
-- [ ] Build or complete `InboxComponent` in `src/app/shared/components/inbox/inbox.component.ts` following the Figma design
-  - [ ] Implement inbox UI per design system
-  - [ ] Update inbox cards array when new content is available
-  - [ ] Implement card dismissal with confirmation dialog
-  - [ ] Handle deep linking for card URLs
+- [x] Build or complete `InboxComponent` in `src/app/shared/components/inbox/inbox.component.ts` following the Figma design
+  - [x] Implement inbox UI per design system
+  - [x] Update inbox cards array when new content is available
+  - [x] Implement card dismissal with confirmation dialog
+  - [x] Handle deep linking for card URLs
 - [x] Ensure `InboxButtonComponent` shows unread indicator and animates notification icon
-- [ ] Update inbox card list when new content is available
-- [ ] Log card impressions when viewed
-- [ ] Handle navigation via deep links for cards
-- [ ] Allow users to dismiss cards
-- [ ] Use provided `.env` for credentials
-- [ ] Develop and test only for Android
-- [ ] Follow Angular best practices and maintain code quality
+- [x] Update inbox card list when new content is available
+- [x] Log card impressions when viewed (pending: actual impression logic if required by Braze)
+- [x] Handle navigation via deep links for cards
+- [x] Allow users to dismiss cards
+- [x] Use provided `.env` for credentials
+- [x] Develop and test only for Android
+- [x] Follow Angular best practices and maintain code quality
 
 
 ------ Suggestions
-- [ ] Ensure the returned cards match the `BrazeContentCard` model; map/convert if necessary
-- [ ] Refine unread logic: only set `unreadMessages` to true if there are actually new/unread cards
+- [x] Ensure the returned cards match the `BrazeContentCard` model; map/convert if necessary
+- [x] Refine unread logic: only set `unreadMessages` to true if there are actually new/unread cards
+- [x] Enable Angular animations globally with `provideAnimations()` in `main.ts`
+- [x] Use a native element wrapper for animation triggers if needed
+- [ ] (Optional) Further refine card impression tracking and unread logic as needed

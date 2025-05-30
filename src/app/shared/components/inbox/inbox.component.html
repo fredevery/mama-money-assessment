@@ -12,6 +12,7 @@
             <app-mm-card [title]="card.title || 'Inbox Message'"
               [smallTitle]="true"
               [showCloseButton]="true"
+              (click)="openCard(card)"
               (closeEvent)="dismissCard(card)">
               <p class="m-b-2">{{ card.cardDescription }}</p>
             </app-mm-card>

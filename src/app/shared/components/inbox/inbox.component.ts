@@ -23,7 +23,6 @@ import { trigger, transition, style, animate } from '@angular/animations';
       ])
     ])
   ],
-  // encapsulation: ViewEncapsulation.Emulated,
   imports: [IonAlert, IonHeader, IonList, IonContent, MmCardComponent, IonModal, forwardRef(() => HeaderComponent)]
 })
 export class InboxComponent {
@@ -53,9 +52,13 @@ export class InboxComponent {
   ];
 
   openCard(card: BrazeContentCard) {
-    // TODO: Implement deep link or navigation logic
     if (card.url) {
-      window.open(card.url, card.openURLInWebView ? '_blank' : '_self');
+      if (card.url.startsWith('/') || card.url.startsWith('#/')) {
+        const route = card.url.replace(/^#/, '');
+        window.dispatchEvent(new CustomEvent('navigate', { detail: { route } }));
+      } else {
+        window.open(card.url, card.openURLInWebView ? '_blank' : '_self');
+      }
     }
   }
 
