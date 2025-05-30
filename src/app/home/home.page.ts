@@ -3,10 +3,11 @@ import { HeaderComponent } from '@components/header/header.component';
 import { MmCardComponent } from '@components/mm-card/mm-card.component';
 import { IonHeader, IonContent, IonButton } from '@ionic/angular/standalone';
 import { BrazeService } from '@services/braze.service';
+import { InboxComponent } from '@components/inbox/inbox.component';
 
 @Component({
   selector: 'app-home',
-  template: `<ion-header mode="ios" class="ion-no-border">
+  template: ` <ion-header mode="ios" class="ion-no-border">
       <app-header [showInboxButton]="true"></app-header>
     </ion-header>
 
@@ -22,10 +23,12 @@ import { BrazeService } from '@services/braze.service';
       <ion-button (click)="sendInboxTestEvent()" color="primary" expand="block" size="large" fill="solid" class="m-t-4">
         Send Test Event
       </ion-button>
-    </ion-content> `,
+
+      <app-inbox></app-inbox>
+    </ion-content>`,
   styles: [],
   standalone: true,
-  imports: [IonHeader, IonContent, IonButton, HeaderComponent, MmCardComponent]
+  imports: [IonHeader, IonContent, IonButton, HeaderComponent, MmCardComponent, InboxComponent]
 })
 export class HomePage {
   braze = inject(BrazeService);

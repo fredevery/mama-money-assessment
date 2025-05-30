@@ -62,7 +62,7 @@ export class BrazeService {
     }
 
     if (this.isInboxNotification(notification)) {
-      this.fetchContentCards();
+      this.refreshContentCards();
     }
   }
 
@@ -111,12 +111,12 @@ export class BrazeService {
     }
   }
 
-  fetchContentCards(): void {
-    console.log('BrazeService: Fetching content cards from server...');
+  refreshContentCards(): void {
+    console.log('BrazeService: Refreshing content cards from server...');
     if (this.pluginAvailable && BrazePlugin.getContentCardsFromServer) {
       BrazePlugin.getContentCardsFromServer(
         (cards: BrazeContentCard[]) => {
-          console.log('BrazeService: Fetched content cards:', cards);
+          console.log('BrazeService: Refreshing content cards:', cards);
           this.contentCards.set(cards);
           this.unreadMessages.set(true);
         },
