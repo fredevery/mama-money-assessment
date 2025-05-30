@@ -9,7 +9,7 @@
     "//1": "Build / Run Scripts",
     "//2": "───────────────────────────────────────",
     "start:android": "npm run sync:android && ionic cap run android -l --external",
-    "build:android": "npm run sync:android && ionic cap build android",
+    "build:android": "npm run sync:android && ionic cap build android --no-open",
     "//3": "───────────────────────────────────────",
     "//4": "Utility Scripts",
     "//5": "───────────────────────────────────────",

@@ -1,11 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { HeaderComponent } from '@components/header/header.component';
 import { MmCardComponent } from '@components/mm-card/mm-card.component';
 import { IonHeader, IonContent, IonButton } from '@ionic/angular/standalone';
+import { BrazeService } from '@services/braze.service';
 
 @Component({
   selector: 'app-home',
-  template: `<ion-header mode="ios" class="ion-no-border">
+  template: ` <ion-header mode="ios" class="ion-no-border">
       <app-header [showInboxButton]="true"></app-header>
     </ion-header>
 
@@ -21,13 +22,15 @@ import { IonHeader, IonContent, IonButton } from '@ionic/angular/standalone';
       <ion-button (click)="sendInboxTestEvent()" color="primary" expand="block" size="large" fill="solid" class="m-t-4">
         Send Test Event
       </ion-button>
-    </ion-content> `,
+    </ion-content>`,
   styles: [],
   standalone: true,
   imports: [IonHeader, IonContent, IonButton, HeaderComponent, MmCardComponent]
 })
 export class HomePage {
+  braze = inject(BrazeService);
+
   sendInboxTestEvent(): void {
-    // TODO: Log Braze custom event INBOX_MESSAGE_TEST to trigger an Inbox push notification and accompanying content card
+    this.braze.logEvent('INBOX_MESSAGE_TEST');
   }
 }

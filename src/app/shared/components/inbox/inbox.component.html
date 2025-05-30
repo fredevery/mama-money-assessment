@@ -1,0 +1,38 @@
+<ion-modal [isOpen]="showInbox()">
+  <ng-template>
+    <ion-header mode="ios" class="ion-no-border">
+      <app-header title="Notifications"
+        [showBackButton]="true"
+        (backEvent)="backEvent.emit()"></app-header>
+    </ion-header>
+    <ion-content class="ion-padding">
+      <ion-list>
+        @for (card of contentCards(); track card.id) {
+          <div @itemAnimation>
+            <app-mm-card [title]="card.title || 'Inbox Message'"
+              [smallTitle]="true"
+              [showCloseButton]="true"
+              [url]="card.url || null"
+              [openURLInWebView]="card.openURLInWebView"
+              (closeEvent)="dismissCard(card)">
+              <p class="m-b-1">{{ card.cardDescription }}</p>
+              <p class="card-date">{{ card.created | dateTimeString }}</p>
+            </app-mm-card>
+          </div>
+        }
+      </ion-list>
+      @if (contentCards().length === 0) {
+        <h1>No messages</h1>
+      }
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+<ion-alert
+  mode="ios"
+  [isOpen]="showDismissConfirmation()"
+  header="Delete Message"
+  message="Are you sure you want to delete this message?"
+  [buttons]="confirmationActions"
+  (didDismiss)="cancelDismissCard()">
+</ion-alert>

@@ -5,7 +5,6 @@ const buildGradlePath = 'android/build.gradle';
 const writeFileToPath = (path, file) => {
   try {
     writeFileSync(path, file);
-    console.log(`${path} altered successfully!`);
   } catch (err) {
     throw err;
   }

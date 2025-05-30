@@ -1,11 +1,14 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BrazePushNotification } from '@models/braze/braze-push-notification';
 import { PushNotifications, PushNotificationSchema } from '@capacitor/push-notifications';
+import { BrazeService } from './braze.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PushNotificationService {
+  braze = inject(BrazeService);
+
   constructor() {}
 
   init() {
@@ -16,11 +19,20 @@ export class PushNotificationService {
     PushNotifications.addListener(
       'pushNotificationReceived',
       (notification: PushNotificationSchema | BrazePushNotification) => {
-        // TODO: Implement content card checking functionality when receiving Braze push notification with type === 'inbox' in "Extra's"
+        if (this.braze.isBrazePushNotification(notification as BrazePushNotification)) {
+          this.braze.handlePushNotification(notification as BrazePushNotification);
+        } else {
+          this.handleOtherPushNotification(notification as PushNotificationSchema);
+        }
       }
     );
 
     this.registerPush();
+  }
+
+  handleOtherPushNotification(notification: PushNotificationSchema): void {
+    // Handle other push notifications here
+    console.log('Received push notification:', notification);
   }
 
   async registerPush(): Promise<void> {

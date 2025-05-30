@@ -1,8 +1,10 @@
-import { Component, forwardRef, input, output } from '@angular/core';
+import { Component, forwardRef, input, output, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { InboxButtonComponent } from '@components/inbox-button/inbox-button.component';
 import { IonToolbar, IonTitle, IonButton, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { arrowBack } from 'ionicons/icons';
+import { InboxService } from '@services/inbox.service';
 
 @Component({
   selector: 'app-header',
@@ -14,7 +16,7 @@ import { arrowBack } from 'ionicons/icons';
     }
     <ion-title> {{ title() }} </ion-title>
     @if (showInboxButton()) {
-    <app-inbox-button slot="end"></app-inbox-button>
+    <app-inbox-button slot="end" (showInboxEvent)="showInbox()"></app-inbox-button>
     }
   </ion-toolbar>`,
   styles: [
@@ -32,6 +34,8 @@ import { arrowBack } from 'ionicons/icons';
   imports: [IonToolbar, IonTitle, forwardRef(() => InboxButtonComponent), IonButton, IonIcon]
 })
 export class HeaderComponent {
+  inbox = inject(InboxService);
+  router = inject(Router);
   title = input('Mama Money');
   showBackButton = input(false);
   showInboxButton = input(false);
@@ -39,5 +43,13 @@ export class HeaderComponent {
 
   constructor() {
     addIcons({ arrowBack });
+  }
+
+  showInbox(): void {
+    this.inbox.show();
+  }
+
+  hideInbox(): void {
+    this.inbox.hide();
   }
 }

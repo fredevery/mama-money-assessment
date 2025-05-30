@@ -7,6 +7,6 @@ export const routes: Routes = [
   },
   {
     path: 'complete',
-    loadComponent: () => import('./complete/complete.page').then( m => m.CompletePage)
+    loadComponent: () => import('./complete/complete.page').then((m) => m.CompletePage)
   }
 ];
