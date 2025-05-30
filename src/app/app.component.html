@@ -1,3 +1,4 @@
 <ion-app>
   <ion-router-outlet></ion-router-outlet>
+  <app-inbox [showInbox]="this.inbox.isVisible()" (backEvent)="this.inbox.hide()"></app-inbox>
 </ion-app>

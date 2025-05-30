@@ -1,10 +1,12 @@
-import { Component, inject, computed, input, forwardRef, output, signal, ViewEncapsulation } from '@angular/core';
+import { Component, inject, computed, input, forwardRef, output, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { BrazeService } from '@services/braze.service';
 import { BrazeContentCard } from '@models/braze/braze-content-card';
 import { MmCardComponent } from '@components/mm-card/mm-card.component';
 import { IonList, IonHeader, IonContent, IonModal, IonAlert } from '@ionic/angular/standalone';
 import { HeaderComponent } from '../header/header.component';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { DateTimeStringPipe } from '@pipes/date-time-string.pipe';
 
 @Component({
   selector: 'app-inbox',
@@ -23,14 +25,26 @@ import { trigger, transition, style, animate } from '@angular/animations';
       ])
     ])
   ],
-  imports: [IonAlert, IonHeader, IonList, IonContent, MmCardComponent, IonModal, forwardRef(() => HeaderComponent)]
+  imports: [
+    IonAlert,
+    IonHeader,
+    IonList,
+    IonContent,
+    MmCardComponent,
+    IonModal,
+    forwardRef(() => HeaderComponent),
+    DateTimeStringPipe
+  ]
 })
 export class InboxComponent {
-  showInbox = input(false);
-  cardToDismiss = signal<BrazeContentCard | null>(null);
+  router = inject(Router);
   braze = inject(BrazeService);
+
+  cardToDismiss = signal<BrazeContentCard | null>(null);
   contentCards = computed(() => this.braze.contentCards());
   showDismissConfirmation = computed(() => this.cardToDismiss() !== null);
+
+  showInbox = input(false);
   backEvent = output<void>();
 
   confirmationActions = [
@@ -51,15 +65,10 @@ export class InboxComponent {
     }
   ];
 
-  openCard(card: BrazeContentCard) {
-    if (card.url) {
-      if (card.url.startsWith('/') || card.url.startsWith('#/')) {
-        const route = card.url.replace(/^#/, '');
-        window.dispatchEvent(new CustomEvent('navigate', { detail: { route } }));
-      } else {
-        window.open(card.url, card.openURLInWebView ? '_blank' : '_self');
-      }
-    }
+  constructor() {
+    this.router.events.subscribe(() => {
+      this.backEvent.emit();
+    });
   }
 
   dismissCard(card: BrazeContentCard) {

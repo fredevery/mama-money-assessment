@@ -58,7 +58,6 @@ export class InboxButtonComponent implements AfterViewInit {
 
     effect(() => {
       if (this.unreadMessages()) {
-        console.log('InboxButtonComponent: Unread messages detected, playing shake animation');
         this.playShakeAnimation();
       } else {
         clearTimeout(this.shakeAnimationTimeout!);

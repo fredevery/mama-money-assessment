@@ -46,7 +46,6 @@ export class BrazeService {
   }
 
   logEvent(eventName: string, properties?: Record<string, any>): void {
-    console.log(`BrazeService: Logging event '${eventName}' with properties:`, properties);
     if (this.pluginAvailable && BrazePlugin.logCustomEvent) {
       BrazePlugin.logCustomEvent(eventName, properties || {});
     } else {
@@ -55,7 +54,6 @@ export class BrazeService {
   }
 
   handlePushNotification(notification: BrazePushNotification): void {
-    console.log('BrazeService: Received push notification:', notification);
     if (!this.isBrazePushNotification(notification)) {
       console.warn('Received non-Braze push notification:', notification);
       return;
@@ -112,11 +110,9 @@ export class BrazeService {
   }
 
   refreshContentCards(): void {
-    console.log('BrazeService: Refreshing content cards from server...');
     if (this.pluginAvailable && BrazePlugin.getContentCardsFromServer) {
       BrazePlugin.getContentCardsFromServer(
         (cards: BrazeContentCard[]) => {
-          console.log('BrazeService: Refreshing content cards:', cards);
           this.contentCards.set(cards);
           this.unreadMessages.set(true);
         },
@@ -129,7 +125,6 @@ export class BrazeService {
 
   removeCard(cardId: string): void {
     this.contentCards.update((cards) => cards.filter((card) => card.id !== cardId));
-    console.log(`BrazeService: Removed content card with ID: ${cardId}`, this.contentCards().length);
     BrazePlugin.logContentCardDismissed(cardId);
   }
 }
